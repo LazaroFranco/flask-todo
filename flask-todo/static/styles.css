@@ -1,0 +1,35 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 18px;
+}
+
+body {
+    margin: 2rem auto;
+    color: #434363;
+    width: 80vw;
+}
+
+a {
+    border-bottom: 1px dotted blue;
+    text-decoration: none;
+    color: blue;
+}
+
+li {
+    list-style-type: none;
+}
+
+li.current {
+    color:red;
+}
+
+label {
+    display: block;
+}
+
+input[type='submit'] {
+    display: block;
+}
