@@ -9,10 +9,8 @@
   <p>created date -  {{items.timestamp}}</p>
   
 {% endfor %}
-<p>Add a new todo item?
-  <form action="/todo/create" method="POST">
-    <input type="submit" value="YES!">
+  <form class="add_form" action="/todo/create" method="POST">
+    <input class="add_task" type="submit" value="Add a New Task.">
   </form>
-</p>
 {% endblock %}
 
