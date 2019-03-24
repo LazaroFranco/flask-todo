@@ -7,7 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flask_todo.db import get_db
 
-bp = Blueprint('auth', __name__, url_prefix='/todo/auth')
+bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/todo/register', methods=('GET', 'POST'))
 def register():
@@ -39,7 +39,7 @@ def register():
     return render_template('auth/register.html')
 
 
-@bp.route('/todo/login', methods=('GET', 'POST'))
+@bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -77,7 +77,7 @@ def load_logged_in_user():
         ).fetchone()
 
 
-@bp.route('/todo/logout')
+@bp.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
