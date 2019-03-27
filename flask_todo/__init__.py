@@ -47,6 +47,16 @@ def create_app(test_config=None):
     @app.route('/todo/create', methods=['POST'])
     def create():
         return render_template('create.html') 
+    
+    methods_route_allows = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
+
+    @app.route('/todo/update', methods=methods_route_allows)
+    def method_route():
+        if request.method == ['GET']:
+            new_item = Item(request.form['task'])
+            tasks.append(new_item)
+            return redirect(url_for('index'))
+        return render_template('update.html', allowed=methods_route_allows, method=request.method, tasks=tasks)
 
 
     @app.route('/status')

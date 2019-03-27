@@ -3,13 +3,12 @@
 }
 
 html {
-    background-color: #EEAA7B;
+    background-color: white;
     font-size: 18px;
 }
 
 body {
     margin: 2rem auto;
-    color: #434363;
     width: 80vw;
 }
 
@@ -31,10 +30,6 @@ label {
     display: block;
 }
 
-input[type='submit'] {
-    display: block;
-}
-
 nav {
   position: absolute;
   right: 1em;
@@ -49,20 +44,36 @@ nav {
 }
 
 h1 {
-  color: #EEAA7B;
+  color: white;
   text-align: center;
 }
 
 header {
+  width: 100;
   background-color: #07889B;
 }
 
 footer {
-  color: #EEAA7B;
-  background-color: #07889B;
+  color: black;
   text-align: center;
 }
 
 .add_form {
   text-align: center;
 }
+
+input {
+  position: absolute;
+  center: 1em;
+}
+
+.sub {
+  border: none;
+  resize: none;
+  border-bottom: 3px solid #3498DB;
+  background: #fff;
+  color: #4D5656;
+  font-size: 1.3rem;
+  border-radius: 2px;
+}
+
