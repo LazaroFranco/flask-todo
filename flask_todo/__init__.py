@@ -1,6 +1,6 @@
 import sys
 import os
-
+import psycopg2
 from flask import Flask, flash, request, render_template, url_for, redirect
 
 from .task import Item
@@ -14,8 +14,8 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DB_NAME='flasktodo',
-        DB_USER='flasktodo_user',
+        DB_NAME='task_list',
+        DB_USER='csetuser',
     )
 
     if test_config is None:
@@ -28,7 +28,11 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    from . import db
+    db.init_app(app)
 
+    from . import auth
+    app.register_blueprint(auth.bp)
 
  #------------------------------------------------------------------------------------------------------------  
 
@@ -87,11 +91,7 @@ def create_app(test_config=None):
         return response
     
  #------------------------------------------------------------------------------------------------------------  
-   #from . import db
-   # db.init_app(app)
 
-    from . import auth
-    app.register_blueprint(auth.bp)
     return app
    
   ## @app.route('/calculate', methods=['GET', 'POST'])

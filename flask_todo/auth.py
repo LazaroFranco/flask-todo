@@ -1,13 +1,17 @@
 import functools
-
+import psycopg2
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flask_todo.db import get_db
+from flask_todo.db import get_db 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+
+ #------------------------------------------------------------------------------------------------------------  
+            #REGISTER
 
 @bp.route('/todo/register', methods=('GET', 'POST'))
 def register():
@@ -15,19 +19,20 @@ def register():
         username = request.form['username']
         password = request.form['password']
         db = get_db()
+        cur = db.cursor()
         error = None
 
         if not username:
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
-        elif db.execute(
+        elif cur.execute(
             'SELECT id FROM user WHERE username = ?', (username,)
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
 
         if error is None:
-            db.execute(
+            cur.execute(
                 'INSERT INTO user (username, password) VALUES (?, ?)',
                 (username, generate_password_hash(password))
             )
@@ -36,8 +41,12 @@ def register():
 
         flash(error)
 
+        cur.close()
+
     return render_template('auth/register.html')
 
+ #------------------------------------------------------------------------------------------------------------
+            #LOGIN
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
@@ -45,8 +54,9 @@ def login():
         username = request.form['username']
         password = request.form['password']
         db = get_db()
+        cur = db.cursor()
         error = None
-        user = db.execute(
+        user = cur.execute(
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
@@ -62,8 +72,11 @@ def login():
 
         flash(error)
 
+        cur.close()
+
     return render_template('auth/login.html')
 
+ #------------------------------------------------------------------------------------------------------------  
 
 @bp.before_app_request
 def load_logged_in_user():
