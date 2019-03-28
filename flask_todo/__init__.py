@@ -1,7 +1,7 @@
 import sys
 import os
 
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, flash, request, render_template, url_for, redirect
 
 from .task import Item
 
@@ -14,8 +14,8 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'flask_todo.sqlite'),
-
+        DB_NAME='flasktodo',
+        DB_USER='flasktodo_user',
     )
 
     if test_config is None:
@@ -30,24 +30,43 @@ def create_app(test_config=None):
         pass
 
 
-    tasks = []
+ #------------------------------------------------------------------------------------------------------------  
 
     @app.route('/')
     def root():
         return redirect(url_for('index'))
-    
+ #------------------------------------------------------------------------------------------------------------  
+                        #LIST ALL 
     @app.route('/todo', methods=["GET", "POST"])
     def index():
+        tasks = [
+            Item('test task')
+        ]
+
         if request.method == 'POST':
             new_item = Item(request.form['task'])
             tasks.append(new_item)
             return redirect(url_for('index'))
-        return render_template('index.html', tasks=tasks)
 
-    @app.route('/todo/create', methods=['POST'])
+        filter_option = request.args.get('filter')
+        if filter_option == 'completed':
+            tasks = list(filter(lambda t: t.completed, tasks))
+        elif filter_option == 'active':
+            tasks = list(filter(lambda t: not t.completed, tasks))
+
+
+        print(len(tasks))
+        return render_template('index.html', filter_option=filter_option, tasks=tasks)
+
+ #------------------------------------------------------------------------------------------------------------  
+                        #CREATE
+    @app.route('/todo/create', methods=["GET", "POST"])
     def create():
-        return render_template('create.html') 
+        print('/create')
+        return render_template('create.html')
     
+ #------------------------------------------------------------------------------------------------------------  
+                        #UPDATE
     methods_route_allows = ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
 
     @app.route('/todo/update', methods=methods_route_allows)
@@ -59,6 +78,7 @@ def create_app(test_config=None):
         return render_template('update.html', allowed=methods_route_allows, method=request.method, tasks=tasks)
 
 
+ #------------------------------------------------------------------------------------------------------------  
     @app.route('/status')
     def status_route():
         code = request.args.get('c', 200)
@@ -66,8 +86,9 @@ def create_app(test_config=None):
 
         return response
     
-    from . import db
-    db.init_app(app)
+ #------------------------------------------------------------------------------------------------------------  
+   #from . import db
+   # db.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)

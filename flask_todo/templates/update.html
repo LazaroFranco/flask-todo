@@ -6,4 +6,6 @@
 <h2>These are your Tasks.</h2>
 {% for items in tasks %}
   <h3>'{{items.task}}'</h3>
-  <p>created date -  {{items.timestamp}}</p>
+  <p>created date -  {{items.task_timestamp}}</p>
+{% endfor %}
+{% endblock %}

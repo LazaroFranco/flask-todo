@@ -9,7 +9,7 @@ class Item():
     count = 1
     def __init__(self, task):
         self.task = task
-        self.timestamp = datetime.datetime.now()
-        #self.completed = False
+        self.task_timestamp = datetime.datetime.now()
+        self.completed = False
         self.id = Item.count
         Item.count += 1

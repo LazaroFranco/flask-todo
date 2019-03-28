@@ -38,7 +38,7 @@ nav {
 
 .add_task {
   text-decoration: underline;
-  color: blue;
+  color: #880000 ;
   font-size: 1em;
   text-align: center;
 }
@@ -50,7 +50,7 @@ h1 {
 
 header {
   width: 100;
-  background-color: #07889B;
+  background-color: #880000;
 }
 
 footer {
@@ -62,17 +62,12 @@ footer {
   text-align: center;
 }
 
-input {
-  position: absolute;
-  center: 1em;
-}
-
 .sub {
   border: none;
   resize: none;
   border-bottom: 3px solid #3498DB;
   background: #fff;
-  color: #4D5656;
+  color: #880000;
   font-size: 1.3rem;
   border-radius: 2px;
 }
