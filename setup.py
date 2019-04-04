@@ -1,3 +1,4 @@
+    
 from setuptools import find_packages, setup
 
 setup(
@@ -8,6 +9,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
+        'gunicorn',
         'psycopg2',
     ],
     extras_require={

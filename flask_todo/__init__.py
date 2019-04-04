@@ -1,7 +1,8 @@
 import sys
 import os
 import psycopg2
-from flask import Flask, flash, request, render_template, url_for, redirect
+import datetime
+from flask import Flask, flash, request, render_template, make_response,  url_for, redirect
 
 from .task import Item
 
@@ -28,11 +29,10 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
     from . import db
     db.init_app(app)
 
-    from . import auth
-    app.register_blueprint(auth.bp)
 
  #------------------------------------------------------------------------------------------------------------  
 
@@ -43,31 +43,81 @@ def create_app(test_config=None):
                         #LIST ALL 
     @app.route('/todo', methods=["GET", "POST"])
     def index():
-        tasks = [
-            Item('test task')
-        ]
-
-        if request.method == 'POST':
-            new_item = Item(request.form['task'])
-            tasks.append(new_item)
-            return redirect(url_for('index'))
+        if request.method == "POST":
+            item_id = request.form["id"]
+            
+            if item_id:
+                con = db.get_db()
+                cur = con.cursor()
+                cur.execute(
+                        "UPDATE items SET completed = True WHERE id = %s",
+                        (item_id,)
+                )
+                con.commit()
 
         filter_option = request.args.get('filter')
+
+
+        #if request.method == 'POST':
+        #    new_item = Item(request.form['task'])
+        #    tasks.append(new_item)
+        #    return redirect(url_for('index'))
+
+        con = db.get_db()
+        cur = con.cursor()
+
         if filter_option == 'completed':
-            tasks = list(filter(lambda t: t.completed, tasks))
+            cur.execute("SELECT * FROM items WHERE completed = True")
         elif filter_option == 'active':
-            tasks = list(filter(lambda t: not t.completed, tasks))
+            cur.execute("SELECT * FROM items WHERE completed = False")
+        else:
+            cur.execute("SELECT * FROM items")
 
+        task_results = cur.fetchall()
+        cur.close()
 
-        print(len(tasks))
+        tasks = []
+        for result in task_results:
+            tasks.append({
+                "id": result[0],
+                "task": result[1],
+                "task_timestamp": result[2],
+                "completed": result[3],
+            })
+
         return render_template('index.html', filter_option=filter_option, tasks=tasks)
 
  #------------------------------------------------------------------------------------------------------------  
                         #CREATE
     @app.route('/todo/create', methods=["GET", "POST"])
     def create():
-        print('/create')
-        return render_template('create.html')
+        if request.method == "GET":
+            return render_template('create.html', task=None)
+
+        elif request.method == "POST":
+            new_task = request.form.get('task', False)
+
+            if new_task:
+                dt = datetime.datetime.now()
+
+                # Save to database
+                con = db.get_db()
+                cur = con.cursor()
+                cur.execute(
+                        "INSERT INTO items (task, task_timestamp, completed) VALUES (%s, %s, %s)",
+                        (new_task, dt, False)
+                )
+                con.commit()
+                cur.close()
+
+                # TODO: If error, flash it to the screen
+
+                flash('To-Do item was added. Want to add another?', 'success')
+            else:
+                flash('You need to add some text first.', 'error')
+
+        return render_template('create.html', new_task=new_task)
+
     
  #------------------------------------------------------------------------------------------------------------  
                         #UPDATE

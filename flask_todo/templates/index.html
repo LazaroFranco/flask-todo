@@ -4,11 +4,22 @@
 
 {% block content  %}
 <h2>These are your Tasks.</h2>
-{% for items in tasks %}
-  <h3>'{{items.task}}' - completed? {{items.completed}}</h3>
-  <p>created date -  {{items.task_timestamp}}</p>
+  <ul>
+    {% for items in tasks %}
+      <li {% if items.completed %}class="completed"{% endif %}>
+        {% if not items.completed %}
+        <form class="complete" method="post">
+          <input type="hidden" value={{ items.id }} name="id" />
+          <input type="submit" value="Complete" />
+        </form>
+        <h3>{{ items.task }}</h3> 
+        <p>(Created Date/Time: {{ items.task_timestamp }})</p>
+        {% endif %}
 
-{% endfor %}
+
+      </li>
+    {% endfor %} 
+  </ul>
 
 
   <section class="filters">

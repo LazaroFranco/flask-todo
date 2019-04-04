@@ -3,8 +3,9 @@
 {% block title %} Add a New Task! {% endblock %}
 
 {% block content %}
+<form method="post">
   <form action="{{url_for('index')}}" method="POST">
-    <input class="sub" type="text" name="task"</input>
+    <input class="sub" type="text" name="task" id="task"</input>
     <input type="submit" value="Submit Task!"</input>
   </form>
 {% endblock %}
