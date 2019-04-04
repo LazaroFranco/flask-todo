@@ -4,32 +4,29 @@
 
 {% block content  %}
 <h2>These are your Tasks.</h2>
-  <ul>
+  <section class="filters">
+    <h4>Show: <a href="/todo" {% if not filter_option %}class="selected"{% endif %}>All</a>
+    <a href="/todo?filter=active" {% if filter_option == 'active' %}class="selected"{% endif %}>Active</a>
+    <a href="/todo?filter=completed" {% if filter_option == 'completed' %}class="selected"{% endif %}>Completed</a></h4>
+
+  </section>
+
+  <ul class="paper">
     {% for items in tasks %}
       <li {% if items.completed %}class="completed"{% endif %}>
+        <h3>{{ items.task }}</h3> 
+        <p>(Created Date/Time: {{ items.task_timestamp }})</p>
+
         {% if not items.completed %}
         <form class="complete" method="post">
           <input type="hidden" value={{ items.id }} name="id" />
           <input type="submit" value="Complete" />
         </form>
-        <h3>{{ items.task }}</h3> 
-        <p>(Created Date/Time: {{ items.task_timestamp }})</p>
         {% endif %}
-
-
       </li>
     {% endfor %} 
   </ul>
-
-
-  <section class="filters">
-    <span>Show:</span>
-    <a href="/todo" {% if not filter_option %}class="selected"{% endif %}>All</a>
-    <a href="/todo?filter=active" {% if filter_option == 'active' %}class="selected"{% endif %}>Active</a>
-    <a href="/todo?filter=completed" {% if filter_option == 'completed' %}class="selected"{% endif %}>Completed</a>
-  </section>
   
-
   <form class="add_form" action="/todo/create" method="POST">
     <input class="add_task" type="submit" value="Add a New Task.">
   </form>
